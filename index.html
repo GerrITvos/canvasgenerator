@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #6B2D7B;
+            --primary-light: #8B4D9B;
+            --accent: #E8D5ED;
+            --bg: #F5F5F5;
+            --surface: #FFFFFF;
+            --text: #333;
+            --text-light: #666;
+            --border: #E0E0E0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        header { text-align: center; margin-bottom: 2rem; }
+        header h1 { color: var(--primary); font-size: 2rem; }
+        header p { color: var(--text-light); }
+
+        .canvas-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .canvas-title {
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+        .field-group { margin-bottom: 1.5rem; }
+        .field-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--primary);
+        }
+        .field-group .hint {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+        }
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent);
+        }
+        textarea { min-height: 80px; }
+
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        @media (max-width: 600px) {
+            .row, .row-3 { grid-template-columns: 1fr; }
+        }
+
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-light); }
+        .btn-secondary { background: #4A4A4A; color: white; }
+        .btn-secondary:hover { background: #333; }
+
+        .export-section {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .hidden { display: none !important; }
+
+        #output {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        #output h1 { color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; margin-bottom: 1rem; }
+        #output h2 { color: var(--primary); margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        #output h3 { color: var(--text); margin-top: 1rem; }
+        #output p { margin-bottom: 0.5rem; white-space: pre-wrap; }
+        #output hr { margin: 1.5rem 0; border: none; border-top: 1px solid var(--border); }
+
+        .sub-section {
+            background: var(--accent);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .sub-section h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Canvas Generator</h1>
+            <p>Transform your idea into a structured feature using Value First & AI Orchestration canvases</p>
+        </header>
+
+        <!-- Idea Section -->
+        <div class="canvas-section">
+            <h2 class="canvas-title">Your Idea</h2>
+            <div class="field-group">
+                <label for="idea-name">Idea Name</label>
+                <input type="text" id="idea-name" placeholder="e.g., Smart Inventory Prediction">
+            </div>
+            <div class="field-group">
+                <label for="idea-description">Description</label>
+                <div class="hint">What problem are you solving? Who is it for?</div>
+                <textarea id="idea-description" rows="3" placeholder="Describe your idea..."></textarea>
+            </div>
+        </div>
+
+        <!-- Value First Canvas -->
+        <div class="canvas-section">
+            <h2 class="canvas-title">Value First Canvas</h2>
+            <p style="margin-bottom: 1rem; color: var(--text-light);">Flow: Data → Solution → Insights → Actions → Value</p>
+
+            <div class="field-group">
+                <label for="vf-data">Data</label>
+                <div class="hint">What data do you have or need to collect?</div>
+                <textarea id="vf-data" placeholder="Existing data sources, data to collect, quality considerations..."></textarea>
+            </div>
+
+            <div class="row">
+                <div class="field-group">
+                    <label for="vf-ai-solution">AI Solution</label>
+                    <div class="hint">How could AI/ML solve this?</div>
+                    <textarea id="vf-ai-solution" placeholder="Type of AI, models, approaches..."></textarea>
+                </div>
+                <div class="field-group">
+                    <label for="vf-non-ai">Non-AI Alternative</label>
+                    <div class="hint">What's the fallback without AI?</div>
+                    <textarea id="vf-non-ai" placeholder="Manual process, rules-based, etc..."></textarea>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label for="vf-insights">Key Insights</label>
+                <div class="hint">What insights will the solution generate?</div>
+                <textarea id="vf-insights" placeholder="Questions answered, actionable insights..."></textarea>
+            </div>
+
+            <div class="field-group">
+                <label for="vf-optimize">Optimize</label>
+                <div class="hint">How will you iterate and improve?</div>
+                <textarea id="vf-optimize" placeholder="Feedback loops, A/B testing, retraining..."></textarea>
+            </div>
+
+            <div class="row">
+                <div class="field-group">
+                    <label for="vf-actions">Actions</label>
+                    <div class="hint">What actions will be taken?</div>
+                    <textarea id="vf-actions" placeholder="Who acts, decision thresholds..."></textarea>
+                </div>
+                <div class="field-group">
+                    <label for="vf-measure">Measure</label>
+                    <div class="hint">How will you measure success?</div>
+                    <textarea id="vf-measure" placeholder="KPIs, baselines, targets..."></textarea>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label for="vf-value">Value</label>
+                <div class="hint">What value will this deliver?</div>
+                <textarea id="vf-value" placeholder="Business value, user value, strategic value..."></textarea>
+            </div>
+
+            <div class="field-group">
+                <label for="vf-ethics">Ethical Considerations</label>
+                <div class="hint">Bias, privacy, transparency, societal impact</div>
+                <textarea id="vf-ethics" placeholder="Ethical implications to address..."></textarea>
+            </div>
+        </div>
+
+        <!-- AI Orchestration Canvas -->
+        <div class="canvas-section">
+            <h2 class="canvas-title">AI Orchestration Framework Canvas</h2>
+            <p style="margin-bottom: 1rem; color: var(--text-light);">Three AI dimensions: Predictive, Generative, Agentic</p>
+
+            <div class="row-3">
+                <div class="field-group">
+                    <label for="ao-predictive">Predictive AI</label>
+                    <div class="hint">What predictions/insights?</div>
+                    <textarea id="ao-predictive" placeholder="Forecasting, patterns, anomalies..."></textarea>
+                </div>
+                <div class="field-group">
+                    <label for="ao-generative">Generative AI</label>
+                    <div class="hint">How can AI amplify work?</div>
+                    <textarea id="ao-generative" placeholder="Content, summaries, personalization..."></textarea>
+                </div>
+                <div class="field-group">
+                    <label for="ao-agentic">Agentic AI</label>
+                    <div class="hint">What runs autonomously?</div>
+                    <textarea id="ao-agentic" placeholder="Automation, workflows, decisions..."></textarea>
+                </div>
+            </div>
+
+            <div class="sub-section">
+                <h4>Synergies</h4>
+                <div class="row-3">
+                    <div class="field-group">
+                        <label for="ao-pred-gen">Predictive + Generative</label>
+                        <textarea id="ao-pred-gen" rows="2" placeholder="Insights → Content"></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label for="ao-gen-agent">Generative + Agentic</label>
+                        <textarea id="ao-gen-agent" rows="2" placeholder="Content → Automation"></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label for="ao-pred-agent">Predictive + Agentic</label>
+                        <textarea id="ao-pred-agent" rows="2" placeholder="Predictions → Actions"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-group" style="margin-top: 1rem;">
+                <label for="ao-ultimate">Ultimate AI Orchestration</label>
+                <div class="hint">How do all three dimensions work together?</div>
+                <textarea id="ao-ultimate" placeholder="End-to-end vision, feedback loops..."></textarea>
+            </div>
+
+            <div class="sub-section">
+                <h4>Implementation Roadmap</h4>
+                <div class="row-3">
+                    <div class="field-group">
+                        <label for="ao-now">NOW</label>
+                        <textarea id="ao-now" rows="2" placeholder="Quick wins, POC..."></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label for="ao-next">NEXT</label>
+                        <textarea id="ao-next" rows="2" placeholder="Expand, integrate..."></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label for="ao-later">LATER</label>
+                        <textarea id="ao-later" rows="2" placeholder="Full vision..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-section">
+                <h4>Risk Safeguards</h4>
+                <div class="row-3">
+                    <div class="field-group">
+                        <label for="ao-risk-biz">Business</label>
+                        <textarea id="ao-risk-biz" rows="2" placeholder="Over-automation, resources..."></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label for="ao-risk-tech">Technology</label>
+                        <textarea id="ao-risk-tech" rows="2" placeholder="Data quality, drift..."></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label for="ao-risk-ethics">Ethics</label>
+                        <textarea id="ao-risk-ethics" rows="2" placeholder="Bias, transparency..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export -->
+        <div class="export-section">
+            <button class="btn btn-primary" onclick="generateOutput()">Generate Output</button>
+            <button class="btn btn-secondary" onclick="downloadMarkdown()">Download Markdown</button>
+            <button class="btn btn-secondary" onclick="downloadPDF()">Download PDF</button>
+        </div>
+
+        <!-- Output Preview -->
+        <div id="output" class="hidden"></div>
+    </div>
+
+    <script>
+        function getValue(id) {
+            return document.getElementById(id).value.trim() || '_Not specified_';
+        }
+
+        function generateMarkdown() {
+            const date = new Date().toISOString().split('T')[0];
+            return `# Feature Canvas: ${getValue('idea-name')}
+
+**Generated:** ${date}
+
+## Idea Description
+${getValue('idea-description')}
+
+---
+
+# Value First Canvas
+
+## Data
+${getValue('vf-data')}
+
+## AI Solution
+${getValue('vf-ai-solution')}
+
+## Non-AI Alternative
+${getValue('vf-non-ai')}
+
+## Key Insights
+${getValue('vf-insights')}
+
+## Optimize
+${getValue('vf-optimize')}
+
+## Actions
+${getValue('vf-actions')}
+
+## Measure
+${getValue('vf-measure')}
+
+## Value
+${getValue('vf-value')}
+
+## Ethical Considerations
+${getValue('vf-ethics')}
+
+---
+
+# AI Orchestration Framework Canvas
+
+## Predictive AI
+${getValue('ao-predictive')}
+
+## Generative AI
+${getValue('ao-generative')}
+
+## Agentic AI
+${getValue('ao-agentic')}
+
+### Synergies
+
+**Predictive + Generative:** ${getValue('ao-pred-gen')}
+
+**Generative + Agentic:** ${getValue('ao-gen-agent')}
+
+**Predictive + Agentic:** ${getValue('ao-pred-agent')}
+
+## Ultimate AI Orchestration
+${getValue('ao-ultimate')}
+
+## Implementation Roadmap
+
+### NOW
+${getValue('ao-now')}
+
+### NEXT
+${getValue('ao-next')}
+
+### LATER
+${getValue('ao-later')}
+
+## Risk Safeguards
+
+### Business
+${getValue('ao-risk-biz')}
+
+### Technology
+${getValue('ao-risk-tech')}
+
+### Ethics
+${getValue('ao-risk-ethics')}
+
+---
+
+*Generated with Canvas Generator - Inspired by Xebia AI For Product Management*
+`;
+        }
+
+        function generateOutput() {
+            const md = generateMarkdown();
+            const html = md
+                .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^### (.+)$/gm, '<h3>$3</h3>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/^---$/gm, '<hr>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/^(?!<[hp]|<hr)/gm, '<p>')
+                .replace(/<p><h/g, '<h')
+                .replace(/<\/h(\d)><\/p>/g, '</h$1>');
+
+            const output = document.getElementById('output');
+            output.innerHTML = html;
+            output.classList.remove('hidden');
+            output.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function downloadMarkdown() {
+            const md = generateMarkdown();
+            const name = document.getElementById('idea-name').value.trim() || 'canvas';
+            const filename = name.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_canvas.md';
+
+            const blob = new Blob([md], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadPDF() {
+            generateOutput();
+            const output = document.getElementById('output');
+            const name = document.getElementById('idea-name').value.trim() || 'canvas';
+            const filename = name.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_canvas.pdf';
+
+            html2pdf().set({
+                margin: 15,
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).from(output).save();
+        }
+    </script>
+</body>
+</html>
