@@ -148,56 +148,56 @@
         <!-- Value First Canvas -->
         <div class="canvas-section">
             <h2 class="canvas-title">Value First Canvas</h2>
-            <p style="margin-bottom: 1rem; color: var(--text-light);">Flow: Data → Solution → Insights → Actions → Value</p>
+            <p style="margin-bottom: 1rem; color: var(--text-light);">Start with Value, work backwards to Data</p>
 
             <div class="field-group">
-                <label for="vf-data">Data</label>
-                <div class="hint">What data do you have or need to collect?</div>
-                <textarea id="vf-data" placeholder="Existing data sources, data to collect, quality considerations..."></textarea>
+                <label for="vf-value">1. Value</label>
+                <div class="hint">What value will this deliver? Start here!</div>
+                <textarea id="vf-value" placeholder="Business value, user value, strategic value..."></textarea>
             </div>
 
             <div class="row">
                 <div class="field-group">
-                    <label for="vf-ai-solution">AI Solution</label>
-                    <div class="hint">How could AI/ML solve this?</div>
+                    <label for="vf-measure">2. Measure</label>
+                    <div class="hint">How will you know you achieved the value?</div>
+                    <textarea id="vf-measure" placeholder="KPIs, baselines, targets..."></textarea>
+                </div>
+                <div class="field-group">
+                    <label for="vf-actions">3. Actions</label>
+                    <div class="hint">What actions lead to that value?</div>
+                    <textarea id="vf-actions" placeholder="Who acts, decision thresholds..."></textarea>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label for="vf-optimize">4. Optimize</label>
+                <div class="hint">How will you iterate and improve?</div>
+                <textarea id="vf-optimize" placeholder="Feedback loops, A/B testing, retraining..."></textarea>
+            </div>
+
+            <div class="field-group">
+                <label for="vf-insights">5. Key Insights</label>
+                <div class="hint">What insights drive those actions?</div>
+                <textarea id="vf-insights" placeholder="Questions answered, actionable insights..."></textarea>
+            </div>
+
+            <div class="row">
+                <div class="field-group">
+                    <label for="vf-ai-solution">6. AI Solution</label>
+                    <div class="hint">How could AI/ML generate those insights?</div>
                     <textarea id="vf-ai-solution" placeholder="Type of AI, models, approaches..."></textarea>
                 </div>
                 <div class="field-group">
-                    <label for="vf-non-ai">Non-AI Alternative</label>
+                    <label for="vf-non-ai">6b. Non-AI Alternative</label>
                     <div class="hint">What's the fallback without AI?</div>
                     <textarea id="vf-non-ai" placeholder="Manual process, rules-based, etc..."></textarea>
                 </div>
             </div>
 
             <div class="field-group">
-                <label for="vf-insights">Key Insights</label>
-                <div class="hint">What insights will the solution generate?</div>
-                <textarea id="vf-insights" placeholder="Questions answered, actionable insights..."></textarea>
-            </div>
-
-            <div class="field-group">
-                <label for="vf-optimize">Optimize</label>
-                <div class="hint">How will you iterate and improve?</div>
-                <textarea id="vf-optimize" placeholder="Feedback loops, A/B testing, retraining..."></textarea>
-            </div>
-
-            <div class="row">
-                <div class="field-group">
-                    <label for="vf-actions">Actions</label>
-                    <div class="hint">What actions will be taken?</div>
-                    <textarea id="vf-actions" placeholder="Who acts, decision thresholds..."></textarea>
-                </div>
-                <div class="field-group">
-                    <label for="vf-measure">Measure</label>
-                    <div class="hint">How will you measure success?</div>
-                    <textarea id="vf-measure" placeholder="KPIs, baselines, targets..."></textarea>
-                </div>
-            </div>
-
-            <div class="field-group">
-                <label for="vf-value">Value</label>
-                <div class="hint">What value will this deliver?</div>
-                <textarea id="vf-value" placeholder="Business value, user value, strategic value..."></textarea>
+                <label for="vf-data">7. Data</label>
+                <div class="hint">What data feeds the solution?</div>
+                <textarea id="vf-data" placeholder="Existing data sources, data to collect, quality considerations..."></textarea>
             </div>
 
             <div class="field-group">
@@ -320,29 +320,29 @@ ${getValue('idea-description')}
 
 # Value First Canvas
 
-## Data
-${getValue('vf-data')}
+## 1. Value
+${getValue('vf-value')}
 
-## AI Solution
-${getValue('vf-ai-solution')}
-
-## Non-AI Alternative
-${getValue('vf-non-ai')}
-
-## Key Insights
-${getValue('vf-insights')}
-
-## Optimize
-${getValue('vf-optimize')}
-
-## Actions
-${getValue('vf-actions')}
-
-## Measure
+## 2. Measure
 ${getValue('vf-measure')}
 
-## Value
-${getValue('vf-value')}
+## 3. Actions
+${getValue('vf-actions')}
+
+## 4. Optimize
+${getValue('vf-optimize')}
+
+## 5. Key Insights
+${getValue('vf-insights')}
+
+## 6. AI Solution
+${getValue('vf-ai-solution')}
+
+## 6b. Non-AI Alternative
+${getValue('vf-non-ai')}
+
+## 7. Data
+${getValue('vf-data')}
 
 ## Ethical Considerations
 ${getValue('vf-ethics')}
