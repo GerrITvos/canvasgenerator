@@ -15,6 +15,7 @@
             --text: #333;
             --text-light: #666;
             --border: #E0E0E0;
+            --blue: #0078D4;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -28,18 +29,18 @@
         header h1 { color: var(--primary); font-size: 2rem; }
         header p { color: var(--text-light); }
 
-        /* Tabs */
         .tabs {
             display: flex;
             gap: 0.5rem;
             margin-bottom: 1.5rem;
             border-bottom: 2px solid var(--border);
+            flex-wrap: wrap;
         }
         .tab {
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1rem;
             background: none;
             border: none;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-light);
             cursor: pointer;
@@ -47,10 +48,7 @@
             transition: all 0.2s;
         }
         .tab:hover { background: var(--accent); color: var(--primary); }
-        .tab.active {
-            background: var(--primary);
-            color: white;
-        }
+        .tab.active { background: var(--primary); color: white; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -69,44 +67,44 @@
             padding-bottom: 0.5rem;
             border-bottom: 2px solid var(--primary);
         }
-        .canvas-subtitle {
-            color: var(--text-light);
-            margin-bottom: 1rem;
-        }
-        .field-group { margin-bottom: 1.5rem; }
+        .canvas-title.blue { color: var(--blue); border-color: var(--blue); }
+        .canvas-subtitle { color: var(--text-light); margin-bottom: 1rem; }
+        .field-group { margin-bottom: 1.25rem; }
         .field-group label {
             display: block;
             font-weight: 600;
             margin-bottom: 0.25rem;
             color: var(--primary);
         }
+        .field-group label.blue { color: var(--blue); }
         .field-group .hint {
             font-size: 0.875rem;
             color: var(--text-light);
             margin-bottom: 0.5rem;
             font-style: italic;
         }
-        textarea, input[type="text"] {
+        textarea, input[type="text"], input[type="number"], select {
             width: 100%;
             padding: 0.75rem;
             border: 2px solid var(--border);
             border-radius: 8px;
             font-size: 1rem;
             font-family: inherit;
-            resize: vertical;
         }
-        textarea:focus, input:focus {
+        textarea:focus, input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--accent);
         }
-        textarea { min-height: 80px; }
+        textarea { min-height: 70px; resize: vertical; }
 
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
-        @media (max-width: 600px) {
-            .row, .row-3 { grid-template-columns: 1fr; }
+        .row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; }
+        @media (max-width: 700px) {
+            .row, .row-3, .row-4 { grid-template-columns: 1fr; }
             .tabs { flex-wrap: wrap; }
+            .tab { flex: 1; min-width: 120px; text-align: center; }
         }
 
         .btn {
@@ -119,6 +117,8 @@
         }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-light); }
+        .btn-primary.blue { background: var(--blue); }
+        .btn-primary.blue:hover { background: #005a9e; }
         .btn-secondary { background: #4A4A4A; color: white; }
         .btn-secondary:hover { background: #333; }
 
@@ -133,7 +133,7 @@
 
         .hidden { display: none !important; }
 
-        #output {
+        #output, .output-container #output {
             background: var(--surface);
             border-radius: 12px;
             padding: 2rem;
@@ -151,10 +151,14 @@
             padding: 1rem;
             margin-top: 1rem;
         }
-        .sub-section h4 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
+        .sub-section.blue { background: #E6F2FB; }
+        .sub-section h4 { color: var(--primary); margin-bottom: 0.5rem; }
+        .sub-section.blue h4 { color: var(--blue); }
+
+        .sizing-table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.9rem; }
+        .sizing-table th, .sizing-table td { border: 1px solid var(--border); padding: 0.5rem; text-align: left; }
+        .sizing-table th { background: var(--blue); color: white; }
+        .sizing-table input { width: 100%; padding: 0.4rem; border: 1px solid var(--border); border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -164,10 +168,10 @@
             <p>Transform ideas into structured features</p>
         </header>
 
-        <!-- Tabs -->
         <div class="tabs">
-            <button class="tab active" onclick="showTab('value-first')">Value First Canvas</button>
-            <button class="tab" onclick="showTab('orchestration')">AI Orchestration Canvas</button>
+            <button class="tab active" onclick="showTab('value-first')">Value First</button>
+            <button class="tab" onclick="showTab('orchestration')">AI Orchestration</button>
+            <button class="tab" onclick="showTab('onepager')">Tech OnePager</button>
         </div>
 
         <!-- Value First Canvas Tab -->
@@ -243,7 +247,6 @@
                     <button class="btn btn-secondary" onclick="downloadPDF('vf')">Download PDF</button>
                 </div>
             </div>
-
             <div id="output-vf" class="hidden"></div>
         </div>
 
@@ -342,26 +345,225 @@
                     <button class="btn btn-secondary" onclick="downloadPDF('ao')">Download PDF</button>
                 </div>
             </div>
-
             <div id="output-ao" class="hidden"></div>
+        </div>
+
+        <!-- Technology OnePager Tab -->
+        <div id="onepager" class="tab-content">
+            <div class="canvas-section">
+                <h2 class="canvas-title blue">NL Technology OnePager</h2>
+                <p class="canvas-subtitle">Initiative planning and sizing template</p>
+
+                <div class="row">
+                    <div class="field-group">
+                        <label class="blue" for="op-name">OnePager Name</label>
+                        <input type="text" id="op-name" placeholder="Initiative name">
+                    </div>
+                    <div class="field-group">
+                        <label class="blue" for="op-owner">Owner</label>
+                        <input type="text" id="op-owner" placeholder="Owner name">
+                    </div>
+                </div>
+
+                <div class="sub-section blue">
+                    <h4>Team & Strategy</h4>
+                    <div class="row">
+                        <div class="field-group">
+                            <label class="blue" for="op-team">Team</label>
+                            <div class="hint">Head(s) of Product, PM(s), Platform Lead(s), Head(s) of Tech</div>
+                            <textarea id="op-team" rows="3" placeholder="List team members and roles..."></textarea>
+                        </div>
+                        <div class="field-group">
+                            <label class="blue" for="op-strategy">Strategy Themes</label>
+                            <div class="hint">AH Strategy Theme, Tech Strategy Theme, Portfolio Lane</div>
+                            <textarea id="op-strategy" rows="3" placeholder="Relevant strategy themes..."></textarea>
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label class="blue" for="op-requirements">Requirements</label>
+                        <div class="hint">Legal, Privacy, Security, Analytics & Data Science</div>
+                        <textarea id="op-requirements" rows="2" placeholder="Check applicable: Legal, Privacy, Security, Analytics..."></textarea>
+                    </div>
+                </div>
+
+                <div class="field-group" style="margin-top: 1rem;">
+                    <label class="blue" for="op-problem">Problem to Solve</label>
+                    <div class="hint">As a [user] I can [what] in order to [purpose]</div>
+                    <textarea id="op-problem" placeholder="As a ... I can ... in order to ..."></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="field-group">
+                        <label class="blue" for="op-time">Time Criticality</label>
+                        <div class="hint">Urgency / constraints</div>
+                        <textarea id="op-time" rows="2" placeholder="Describe time urgency..."></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label class="blue" for="op-metrics">Success Metrics</label>
+                        <div class="hint">How will success be measured?</div>
+                        <textarea id="op-metrics" rows="2" placeholder="KPIs, targets..."></textarea>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label class="blue" for="op-description">Description</label>
+                    <div class="hint">Value Statement: If we [do something], we think [outcome] will happen. Because...</div>
+                    <textarea id="op-description" rows="4" placeholder="Describe the initiative using hypothesis format..."></textarea>
+                </div>
+
+                <div class="sub-section blue">
+                    <h4>Scope</h4>
+                    <div class="row">
+                        <div class="field-group">
+                            <label class="blue" for="op-in-scope">In Scope (Key Features)</label>
+                            <textarea id="op-in-scope" rows="4" placeholder="Feature A:&#10;Feature B:&#10;Feature C:"></textarea>
+                        </div>
+                        <div class="field-group">
+                            <label class="blue" for="op-out-scope">Out of Scope</label>
+                            <textarea id="op-out-scope" rows="4" placeholder="What is explicitly excluded..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-section blue">
+                    <h4>Dependencies & Planning</h4>
+                    <div class="row">
+                        <div class="field-group">
+                            <label class="blue" for="op-teams">Departments / Teams Involved</label>
+                            <textarea id="op-teams" rows="3" placeholder="Dependencies with other domains, DDBUs, teams..."></textarea>
+                        </div>
+                        <div class="field-group">
+                            <label class="blue" for="op-dependencies">Dependencies with Other Initiatives</label>
+                            <textarea id="op-dependencies" rows="3" placeholder="Feature X must be developed before Y..."></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="field-group">
+                            <label class="blue" for="op-milestones">Milestones / Checkpoints</label>
+                            <textarea id="op-milestones" rows="3" placeholder="M1:&#10;M2:&#10;M3:"></textarea>
+                        </div>
+                        <div class="field-group">
+                            <label class="blue" for="op-docs">Supporting Documents</label>
+                            <textarea id="op-docs" rows="3" placeholder="Links to previous work, specs..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-section blue">
+                    <h4>Value Sizing</h4>
+                    <div class="hint">Score 0-5 for each dimension</div>
+                    <div class="row-3" style="margin-top: 0.5rem;">
+                        <div class="field-group">
+                            <label class="blue" for="op-bv">Business Value (BV)</label>
+                            <select id="op-bv">
+                                <option value="0">0 - None</option>
+                                <option value="1">1 - Minimal (0-500k)</option>
+                                <option value="2">2 - Some (500k-1m)</option>
+                                <option value="3">3 - Moderate (1m-1.5m)</option>
+                                <option value="4">4 - Strong (1.5m-2.5m)</option>
+                                <option value="5">5 - High (2.5m+)</option>
+                            </select>
+                        </div>
+                        <div class="field-group">
+                            <label class="blue" for="op-tc">Time Criticality (TC)</label>
+                            <select id="op-tc">
+                                <option value="0">0 - No time criticality</option>
+                                <option value="1">1 - Minimal</option>
+                                <option value="2">2 - Some</option>
+                                <option value="3">3 - Moderate</option>
+                                <option value="4">4 - Strong</option>
+                                <option value="5">5 - Critical</option>
+                            </select>
+                        </div>
+                        <div class="field-group">
+                            <label class="blue" for="op-rroe">Risk Reduction (RROE)</label>
+                            <select id="op-rroe">
+                                <option value="0">0 - No RROE</option>
+                                <option value="1">1 - Minimal RROE</option>
+                                <option value="2">2 - Limited risk/opportunity</option>
+                                <option value="3">3 - Moderate</option>
+                                <option value="4">4 - Large risk/opportunity</option>
+                                <option value="5">5 - Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;"><strong>Value Sizing Score:</strong> <span id="value-score">0.0</span> (Formula: ((BV×2) + TC + RROE) / 18 × 5)</p>
+                </div>
+
+                <div class="sub-section blue">
+                    <h4>Effort Sizing</h4>
+                    <div class="hint">Total sprints across all teams (1 team ≈ 8 devs)</div>
+                    <div class="row">
+                        <div class="field-group">
+                            <label class="blue" for="op-sprints">Total # Sprints</label>
+                            <input type="number" id="op-sprints" min="0" value="0" placeholder="0">
+                        </div>
+                        <div class="field-group">
+                            <label class="blue">T-Shirt Size</label>
+                            <input type="text" id="op-tshirt" readonly value="XS">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label class="blue" for="op-effort-teams">Teams & Effort Breakdown</label>
+                        <textarea id="op-effort-teams" rows="3" placeholder="Team A: 2 sprints&#10;Team B: 4 sprints"></textarea>
+                    </div>
+                </div>
+
+                <div class="export-section">
+                    <button class="btn btn-primary blue" onclick="generateOutput('op')">Preview</button>
+                    <button class="btn btn-secondary" onclick="downloadMarkdown('op')">Download Markdown</button>
+                    <button class="btn btn-secondary" onclick="downloadPDF('op')">Download PDF</button>
+                </div>
+            </div>
+            <div id="output-op" class="hidden"></div>
         </div>
     </div>
 
     <script>
         function showTab(tabId) {
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-
-            // Show selected tab
             document.getElementById(tabId).classList.add('active');
             event.target.classList.add('active');
         }
 
         function getValue(id) {
             const el = document.getElementById(id);
-            return el ? (el.value.trim() || '_Not specified_') : '_Not specified_';
+            if (!el) return '_Not specified_';
+            if (el.tagName === 'SELECT') return el.options[el.selectedIndex].text;
+            return el.value.trim() || '_Not specified_';
         }
+
+        function getNumValue(id) {
+            const el = document.getElementById(id);
+            return el ? parseInt(el.value) || 0 : 0;
+        }
+
+        // Value Sizing calculation
+        function updateValueScore() {
+            const bv = getNumValue('op-bv');
+            const tc = getNumValue('op-tc');
+            const rroe = getNumValue('op-rroe');
+            const score = ((bv * 2) + tc + rroe) / 18 * 5;
+            document.getElementById('value-score').textContent = score.toFixed(2);
+        }
+
+        // T-shirt size calculation
+        function updateTShirtSize() {
+            const sprints = getNumValue('op-sprints');
+            let size = 'XS';
+            if (sprints >= 36) size = 'XXL';
+            else if (sprints >= 24) size = 'XL';
+            else if (sprints >= 12) size = 'L';
+            else if (sprints >= 5) size = 'M';
+            else if (sprints >= 2) size = 'S';
+            document.getElementById('op-tshirt').value = size;
+        }
+
+        document.getElementById('op-bv')?.addEventListener('change', updateValueScore);
+        document.getElementById('op-tc')?.addEventListener('change', updateValueScore);
+        document.getElementById('op-rroe')?.addEventListener('change', updateValueScore);
+        document.getElementById('op-sprints')?.addEventListener('input', updateTShirtSize);
 
         function generateMarkdownVF() {
             const date = new Date().toISOString().split('T')[0];
@@ -400,7 +602,7 @@ ${getValue('vf-ethics')}
 
 ---
 
-*Generated with Canvas Generator - Inspired by Xebia AI For Product Management*
+*Generated with Canvas Generator*
 `;
         }
 
@@ -467,12 +669,110 @@ ${getValue('ao-risk-ethics')}
 
 ---
 
-*Generated with Canvas Generator - Inspired by Xebia AI For Product Management*
+*Generated with Canvas Generator*
+`;
+        }
+
+        function generateMarkdownOP() {
+            const date = new Date().toISOString().split('T')[0];
+            const bv = getNumValue('op-bv');
+            const tc = getNumValue('op-tc');
+            const rroe = getNumValue('op-rroe');
+            const valueScore = ((bv * 2) + tc + rroe) / 18 * 5;
+
+            return `# NL Technology OnePager: ${getValue('op-name')}
+
+**Owner:** ${getValue('op-owner')}
+**Generated:** ${date}
+
+---
+
+## Team & Strategy
+
+**Team:**
+${getValue('op-team')}
+
+**Strategy Themes:**
+${getValue('op-strategy')}
+
+**Requirements:**
+${getValue('op-requirements')}
+
+---
+
+## Problem to Solve
+${getValue('op-problem')}
+
+## Time Criticality
+${getValue('op-time')}
+
+## Success Metrics
+${getValue('op-metrics')}
+
+## Description
+${getValue('op-description')}
+
+---
+
+## Scope
+
+### In Scope (Key Features)
+${getValue('op-in-scope')}
+
+### Out of Scope
+${getValue('op-out-scope')}
+
+---
+
+## Dependencies & Planning
+
+### Departments / Teams Involved
+${getValue('op-teams')}
+
+### Dependencies with Other Initiatives
+${getValue('op-dependencies')}
+
+### Milestones / Checkpoints
+${getValue('op-milestones')}
+
+### Supporting Documents
+${getValue('op-docs')}
+
+---
+
+## Value Sizing
+
+| Dimension | Score |
+|-----------|-------|
+| Business Value (BV) | ${getValue('op-bv')} |
+| Time Criticality (TC) | ${getValue('op-tc')} |
+| Risk Reduction (RROE) | ${getValue('op-rroe')} |
+| **Value Sizing Score** | **${valueScore.toFixed(2)}** |
+
+Formula: ((BV×2) + TC + RROE) / 18 × 5
+
+---
+
+## Effort Sizing
+
+**Total Sprints:** ${getValue('op-sprints')}
+**T-Shirt Size:** ${getValue('op-tshirt')}
+
+**Teams & Effort Breakdown:**
+${getValue('op-effort-teams')}
+
+---
+
+*Generated with Canvas Generator*
 `;
         }
 
         function generateOutput(type) {
-            const md = type === 'vf' ? generateMarkdownVF() : generateMarkdownAO();
+            let md;
+            if (type === 'vf') md = generateMarkdownVF();
+            else if (type === 'ao') md = generateMarkdownAO();
+            else md = generateMarkdownOP();
+
             const html = md
                 .replace(/^# (.+)$/gm, '<h1>$1</h1>')
                 .replace(/^## (.+)$/gm, '<h2>$1</h2>')
@@ -480,12 +780,13 @@ ${getValue('ao-risk-ethics')}
                 .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.+?)\*/g, '<em>$1</em>')
                 .replace(/^---$/gm, '<hr>')
+                .replace(/\|(.+)\|/g, (match) => `<code>${match}</code>`)
                 .replace(/\n\n/g, '</p><p>')
-                .replace(/^(?!<[hp]|<hr)/gm, '<p>')
+                .replace(/^(?!<[hpc]|<hr)/gm, '<p>')
                 .replace(/<p><h/g, '<h')
                 .replace(/<\/h(\d)><\/p>/g, '</h$1>');
 
-            const outputId = type === 'vf' ? 'output-vf' : 'output-ao';
+            const outputId = `output-${type}`;
             const output = document.getElementById(outputId);
             output.innerHTML = `<div id="output">${html}</div>`;
             output.classList.remove('hidden');
@@ -493,9 +794,11 @@ ${getValue('ao-risk-ethics')}
         }
 
         function downloadMarkdown(type) {
-            const md = type === 'vf' ? generateMarkdownVF() : generateMarkdownAO();
-            const ideaId = type === 'vf' ? 'vf-idea' : 'ao-idea';
-            const prefix = type === 'vf' ? 'value_first' : 'ai_orchestration';
+            let md, ideaId, prefix;
+            if (type === 'vf') { md = generateMarkdownVF(); ideaId = 'vf-idea'; prefix = 'value_first'; }
+            else if (type === 'ao') { md = generateMarkdownAO(); ideaId = 'ao-idea'; prefix = 'ai_orchestration'; }
+            else { md = generateMarkdownOP(); ideaId = 'op-name'; prefix = 'tech_onepager'; }
+
             const name = document.getElementById(ideaId).value.trim() || 'canvas';
             const filename = name.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_' + prefix + '.md';
 
@@ -510,10 +813,14 @@ ${getValue('ao-risk-ethics')}
 
         function downloadPDF(type) {
             generateOutput(type);
-            const outputId = type === 'vf' ? 'output-vf' : 'output-ao';
+            const outputId = `output-${type}`;
             const output = document.getElementById(outputId).querySelector('#output');
-            const ideaId = type === 'vf' ? 'vf-idea' : 'ao-idea';
-            const prefix = type === 'vf' ? 'value_first' : 'ai_orchestration';
+
+            let ideaId, prefix;
+            if (type === 'vf') { ideaId = 'vf-idea'; prefix = 'value_first'; }
+            else if (type === 'ao') { ideaId = 'ao-idea'; prefix = 'ai_orchestration'; }
+            else { ideaId = 'op-name'; prefix = 'tech_onepager'; }
+
             const name = document.getElementById(ideaId).value.trim() || 'canvas';
             const filename = name.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_' + prefix + '.pdf';
 
