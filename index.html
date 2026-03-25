@@ -767,25 +767,83 @@ ${getValue('op-effort-teams')}
 `;
         }
 
-        function generateOutput(type) {
-            let md;
-            if (type === 'vf') md = generateMarkdownVF();
-            else if (type === 'ao') md = generateMarkdownAO();
-            else md = generateMarkdownOP();
+        function generateOutputHTML(type) {
+            if (type === 'op') {
+                const date = new Date().toISOString().split('T')[0];
+                const bv = getNumValue('op-bv');
+                const tc = getNumValue('op-tc');
+                const rroe = getNumValue('op-rroe');
+                const valueScore = ((bv * 2) + tc + rroe) / 18 * 5;
+                const sprints = getNumValue('op-sprints');
 
-            const html = md
+                return `
+                    <h1>NL Technology OnePager: ${getValue('op-name')}</h1>
+                    <p><strong>Owner:</strong> ${getValue('op-owner')}<br><strong>Generated:</strong> ${date}</p>
+                    <hr>
+                    <h2>Team & Strategy</h2>
+                    <p><strong>Team:</strong><br>${getValue('op-team').replace(/\n/g, '<br>')}</p>
+                    <p><strong>Strategy Themes:</strong><br>${getValue('op-strategy').replace(/\n/g, '<br>')}</p>
+                    <p><strong>Requirements:</strong> ${getValue('op-requirements')}</p>
+                    <hr>
+                    <h2>Problem to Solve</h2>
+                    <p>${getValue('op-problem')}</p>
+                    <h2>Time Criticality</h2>
+                    <p>${getValue('op-time')}</p>
+                    <h2>Success Metrics</h2>
+                    <p>${getValue('op-metrics')}</p>
+                    <h2>Description</h2>
+                    <p>${getValue('op-description').replace(/\n/g, '<br>')}</p>
+                    <hr>
+                    <h2>Scope</h2>
+                    <h3>In Scope (Key Features)</h3>
+                    <p>${getValue('op-in-scope').replace(/\n/g, '<br>')}</p>
+                    <h3>Out of Scope</h3>
+                    <p>${getValue('op-out-scope').replace(/\n/g, '<br>')}</p>
+                    <hr>
+                    <h2>Dependencies & Planning</h2>
+                    <h3>Departments / Teams Involved</h3>
+                    <p>${getValue('op-teams').replace(/\n/g, '<br>')}</p>
+                    <h3>Dependencies with Other Initiatives</h3>
+                    <p>${getValue('op-dependencies').replace(/\n/g, '<br>')}</p>
+                    <h3>Milestones / Checkpoints</h3>
+                    <p>${getValue('op-milestones').replace(/\n/g, '<br>')}</p>
+                    <h3>Supporting Documents</h3>
+                    <p>${getValue('op-docs').replace(/\n/g, '<br>')}</p>
+                    <hr>
+                    <h2>Value Sizing</h2>
+                    <table style="width:100%;border-collapse:collapse;margin:1rem 0;">
+                        <tr style="background:#0078D4;color:white;"><th style="padding:8px;border:1px solid #ccc;">Dimension</th><th style="padding:8px;border:1px solid #ccc;">Score</th></tr>
+                        <tr><td style="padding:8px;border:1px solid #ccc;">Business Value (BV)</td><td style="padding:8px;border:1px solid #ccc;">${getValue('op-bv')}</td></tr>
+                        <tr><td style="padding:8px;border:1px solid #ccc;">Time Criticality (TC)</td><td style="padding:8px;border:1px solid #ccc;">${getValue('op-tc')}</td></tr>
+                        <tr><td style="padding:8px;border:1px solid #ccc;">Risk Reduction (RROE)</td><td style="padding:8px;border:1px solid #ccc;">${getValue('op-rroe')}</td></tr>
+                        <tr style="font-weight:bold;"><td style="padding:8px;border:1px solid #ccc;">Value Sizing Score</td><td style="padding:8px;border:1px solid #ccc;">${valueScore.toFixed(2)}</td></tr>
+                    </table>
+                    <hr>
+                    <h2>Effort Sizing</h2>
+                    <p><strong>Total Sprints:</strong> ${sprints}<br><strong>T-Shirt Size:</strong> ${getValue('op-tshirt')}</p>
+                    <p><strong>Teams & Effort Breakdown:</strong><br>${getValue('op-effort-teams').replace(/\n/g, '<br>')}</p>
+                    <hr>
+                    <p><em>Generated with Canvas Generator</em></p>
+                `;
+            }
+
+            // For VF and AO, use markdown conversion
+            let md = type === 'vf' ? generateMarkdownVF() : generateMarkdownAO();
+            return md
                 .replace(/^# (.+)$/gm, '<h1>$1</h1>')
                 .replace(/^## (.+)$/gm, '<h2>$1</h2>')
                 .replace(/^### (.+)$/gm, '<h3>$1</h3>')
                 .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.+?)\*/g, '<em>$1</em>')
                 .replace(/^---$/gm, '<hr>')
-                .replace(/\|(.+)\|/g, (match) => `<code>${match}</code>`)
                 .replace(/\n\n/g, '</p><p>')
-                .replace(/^(?!<[hpc]|<hr)/gm, '<p>')
+                .replace(/^(?!<[hp]|<hr)/gm, '<p>')
                 .replace(/<p><h/g, '<h')
                 .replace(/<\/h(\d)><\/p>/g, '</h$1>');
+        }
 
+        function generateOutput(type) {
+            const html = generateOutputHTML(type);
             const outputId = `output-${type}`;
             const output = document.getElementById(outputId);
             output.innerHTML = `<div id="output">${html}</div>`;
